@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block starter %}
+<h2>Starter</h2>
+<form action="{{ url_for('starter') }}" method=post>
+
+    {{ form.Puzzle.label }}
+    {{ form.Puzzle }}
+
+    {{ form.Password.label }}
+    {{ form.Password }}
+
+    {{ form.Message.label }}
+    {{ form.Message }}
+
+    {{ form.Submit }}
+</form>
+
+<script type="text/javascript">
+    function passKey1(e) {
+
+        $.ajax({
+            type : "POST",
+            url : "{{ url_for('load_ajax') }}",
+            data: JSON.stringify(e.key, null, '\t'),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(result) {
+                console.log(result);
+            }
+        });
+    };
+
+
+    document.getElementById("Puzzle").addEventListener("keyup", passKey1, false);
+</script>
+
+{% endblock %}
