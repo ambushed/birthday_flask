@@ -1,7 +1,112 @@
-{% extends "layout.html" %}
+{%- extends "layout_home.html" %}
 {% block content %}
-<div class="jumbo">
-    <h2>Welcome to the Flask app<h2>
-    <h3>This is the home page for the Flask app<h3>
+
+<div class="container">
+    <div id="loginbox" class="mainbox col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
+        <div class="row">
+            <div class="iconmelon">
+                <svg viewBox="0 0 32 32">
+                    <g filter=""> <use xlink:href="#git"></use> </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="panel panel-default" >
+            <div class="panel-heading">
+                <div class="panel-title text-center">Want to see your present?
+                    Roles need to switch in 13 keystrokes or less!</div>
+            </div>
+            <div class="panel-body" >
+                <form name="form" id="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-grain"></i></span>
+                        <input id="Puzzle" name="Puzzle" type="search"
+                               class="form-control"
+                               value="Here!" name="search" >
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                        <input id="Password" name="Password" type="search" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <!-- Button -->
+                        <div class="col-sm-12 controls">
+                            <button id="GetIn" type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-log-in"></i> Log in</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock %}
+
+<script type="text/javascript">
+ 
+    var mode = "N";
+    var caretPos = 0;
+    var puzzleTxt = document.getElementById("Puzzle");
+    var passwdTxt = document.getElementById("Password");
+    document.getElementById("Password").readOnly = true;
+    puzzleTxt.style.backgroundColor = 'lightgreen';
+
+    function onfocus(e) {
+
+        var start = puzzleTxt.selectionStart;
+        var end = puzzleTxt.selectionEnd;
+        var newText = "";
+        var caretPos = 0;
+
+        $.ajax({
+            type : "POST",
+            url : "{{ url_for('load_ajax') }}",
+            data: JSON.stringify('', null, '\t'),
+            contentType: 'application/json;charset=UTF-8',
+            async : false,
+            success: function(result) {
+                newText = result.buffer;
+                caretPos = result.col[1];
+            }
+        });
+
+        puzzleTxt.value = newText;
+        puzzleTxt.setSelectionRange(caretPos, caretPos);
+    }
+
+    function passKey1(e) {
+
+        e.preventDefault();
+
+        if (e.key == 'ArrowRight' || e.key == 'ArrowLeft' || e.key == 'ArrowUp'
+            || e.key == 'ArrowDown' || e.key == 'Backspace'
+            || e.key == 'Alt' || e.key == 'Tab') {
+            return;
+        };
+
+        var start = puzzleTxt.selectionStart;
+        var end = puzzleTxt.selectionEnd;
+        var newText = "";
+        var caretPos = 0;
+
+        $.ajax({
+            type : "POST",
+            url : "{{ url_for('load_ajax') }}",
+            data: JSON.stringify(e.key, null, '\t'),
+            contentType: 'application/json;charset=UTF-8',
+            async : false,
+            success: function(result) {
+                newText = result.buffer;
+                caretPos = result.col[1];
+            }
+        });
+
+        puzzleTxt.value = newText;
+        passwdTxt.value = passwdTxt.value+e.key;
+        puzzleTxt.setSelectionRange(caretPos, caretPos);
+    };
+
+document.getElementById("Puzzle").addEventListener("keypress", passKey1, false);
+document.getElementById("Puzzle").addEventListener("focus", onfocus, false);
+
+</script>
+
+{%- endblock %}

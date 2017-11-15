@@ -26,24 +26,26 @@ class VimProxy:
         buffer = vim.GetBuffer()
         sentKeys = ''
 
-        if key in ('d','c','y') and len(self.verb) == 0 and len(self.prefix)==0 and self.regime!='v':
-            self.verb = key
-        elif len(self.verb)!=0 and key in ('i','a'):
-            self.textobjscope = key
-        elif (key in ('f','F','t','T') or (key.isdigit() and key!="0")) and len(self.prefix)==0:
-            self.prefix = key
-        else:
-            #if key in ('v') and self.prefix=="": self.regime = key
+        if len(key)!=0:
 
-            sentKeys = self.verb + self.prefix + self.textobjscope + key
-            vim.CallToVim(self.prefix + key)
-            col = vim.GetBufferCursorLocation()
-            buffer = vim.GetBuffer()
-            self.prefix = ""
-            self.count = ""
-            self.textobjscope = ""
-            self.verb = ""
-        
+            if key in ('d','c','y') and len(self.verb) == 0 and len(self.prefix)==0 and self.regime!='v':
+                self.verb = key
+            elif len(self.verb)!=0 and key in ('i','a'):
+                self.textobjscope = key
+            elif (key in ('f','F','t','T') or (key.isdigit() and key!="0")) and len(self.prefix)==0:
+                self.prefix = key
+            else:
+                if key in ('v') and self.prefix=="": self.regime = key
+
+                sentKeys = self.verb + self.prefix + self.textobjscope + key
+                vim.CallToVim(self.prefix + key)
+                col = vim.GetBufferCursorLocation()
+                buffer = vim.GetBuffer()
+                self.prefix = ""
+                self.count = ""
+                self.textobjscope = ""
+                self.verb = ""
+
         result = { "col":col,
                    "buffer":buffer,
                    "sent": sentKeys}

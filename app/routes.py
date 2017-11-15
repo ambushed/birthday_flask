@@ -1,42 +1,59 @@
-from flask import Flask, render_template,request, jsonify
+from flask import Flask, render_template,request, jsonify,redirect,url_for
+from flask_bootstrap import Bootstrap
 from forms import StarterForm
-from neovim import attach
+from vim import Vim
+from vim_proxy import VimProxy
 
 app = Flask(__name__)      
+Bootstrap(app)
 app.config.from_object('config')
-nvim = attach('child', argv=["/bin/env","nvim","--embed"])
-buffer = nvim.current.buffer
-text = 'The quick brown fox jumps over the lazy dog.' 
-buffer[0] = text  
+text = "The quick brown fox jumps over the lazy dog." 
+expected_text = "The lazy dog jumps over the quick brown fox." 
 
-@app.route('/')
+vim = Vim()
+vimProxy = VimProxy(vim,text)
+
+@app.route('/wrong_answer', methods = ['GET','POST'])
+def wrong_answer():
+
+    if request.method == 'POST':
+        return redirect(url_for('home'))
+
+    if request.method == 'GET':
+        vimProxy.Reset()
+        return render_template('wrong_answer.html',puzzle_text=text)
+
+
+@app.route('/home', methods = ['GET','POST'])
 def home():
-    captions = {'login':'Login: '}
-    return render_template('login.html',title='Present for Nelly',captions=captions)
+
+    if request.method == 'POST':
+        if 'TryAgain' in request.form:
+            return render_template('home.html',puzzle_text=text)
+
+        vimProxy.Reset()
+        puzzle_text = request.form.get('Puzzle',None)
+        password_text = request.form.get('Password',None)
+        if (puzzle_text == expected_text and len(password_text)<14):
+            return redirect(url_for('wow'))
+        print("Submitted puzzle text: {}".format(puzzle_text))
+        return redirect(url_for('wrong_answer'))
+
+    if request.method == 'GET':
+        vimProxy.Reset()
+        return render_template('home.html',puzzle_text=text)
 
 @app.route('/load_ajax',methods=['GET','POST'])
 def load_ajax():
+
     key = request.json
     if request.method == 'POST':
 
-        #nvim.command("/whole")
-        nvim.feedkeys(key)
-        #print(buffer[0])
+        result = vimProxy.FeedKeys(key)
+        print("Keys Sent: {}; Result: {}".format(result['sent'],result['buffer']))
+        return jsonify(result)
 
-        app.logger.debug("{}".format(key))
-        return jsonify(key)
     return jsonify(key)
-
-@app.route('/starter', methods = ['GET','POST'])
-def starter():
-    form = StarterForm(text)
-
-    if request.method == 'POST':
-        return 'Form posted!'
-
-    if request.method == 'GET':
-        return render_template('starter.html',form=form)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
