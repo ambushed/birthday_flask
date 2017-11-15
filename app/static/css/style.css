@@ -5,21 +5,30 @@ form label {
     padding: 10px 0;
 }
 
-form input#Puzzle,
-form input#Password,
-form input#subject {
-    width: 400px;
+form input#Puzzle {
+    width: 900px;
     background-color: #fafafa;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
     border: 1px solid #cccccc;
     padding: 5px;
-    font-size: 1.1em;
+    font-size: 1.2em;
+}
+
+form input#Password {
+    width: 900px;
+    background-color: #fafafa;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px solid #cccccc;
+    padding: 5px;
+    font-size: 1.2em;
 }
 
 form textarea#message {
-    width: 500px;
+    width: 900px;
     height: 100px;
     background-color: #fafafa;
     -webkit-border-radius: 3px;
