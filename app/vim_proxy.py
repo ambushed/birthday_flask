@@ -2,7 +2,6 @@ from vim import Vim
 
 class VimProxy:
 
-
     def Reset(self):
         self.vim.SetBuffer(self.original_text)  
 

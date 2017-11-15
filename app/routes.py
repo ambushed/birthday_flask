@@ -20,7 +20,6 @@ def wrong_answer():
         return redirect(url_for('home'))
 
     if request.method == 'GET':
-        vimProxy.Reset()
         return render_template('wrong_answer.html',puzzle_text=text)
 
 
@@ -29,18 +28,16 @@ def home():
 
     if request.method == 'POST':
         if 'TryAgain' in request.form:
+            vimProxy.Reset()
             return render_template('home.html',puzzle_text=text)
 
-        vimProxy.Reset()
         puzzle_text = request.form.get('Puzzle',None)
         password_text = request.form.get('Password',None)
         if (puzzle_text == expected_text and len(password_text)<14):
             return redirect(url_for('wow'))
-        print("Submitted puzzle text: {}".format(puzzle_text))
         return redirect(url_for('wrong_answer'))
 
     if request.method == 'GET':
-        vimProxy.Reset()
         return render_template('home.html',puzzle_text=text)
 
 @app.route('/load_ajax',methods=['GET','POST'])
