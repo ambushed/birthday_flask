@@ -43,7 +43,7 @@ def home():
 
         puzzle_text = request.form.get('Puzzle',None)
         password_text = request.form.get('Password',None)
-        if (puzzle_text == expected_text and len(password_text)<12):
+        if (puzzle_text == expected_text and len(password_text)<=12):
             return redirect(url_for('wow'))
         return redirect(url_for('wrong_answer'))#,length=len(password_text))
 
