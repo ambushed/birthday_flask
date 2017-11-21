@@ -12,6 +12,9 @@ class Vim:
     def GetBufferCursorLocation(self):
         return self.nvim.windows[0].cursor
 
+    def ResetCursor(self):
+        self.nvim.feedkeys('0')
+
     def GetBuffer(self):
         return self.buffer[0]
 

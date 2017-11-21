@@ -10,6 +10,7 @@ class VimProxy:
         self.regime = ""
         self.verb = ""
         self.textobjscope = ""
+        self.vim.ResetCursor()
 
     def __init__(self,vim,text):
 
